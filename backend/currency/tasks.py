@@ -41,11 +41,12 @@ def sending_request(self) -> None:
 def create_records(self, valute: dict) -> None:
     '''Создать записи в БД.'''
 
-    for charcode in valute:
-        Currency.objects.create(
-            charcode=charcode,
-            rate=valute[charcode].get('Value'),
-        )
+    Currency.objects.bulk_create(
+        [
+            Currency(charcode=charcode, rate=valute[charcode].get('Value'))
+            for charcode in valute
+        ],
+    )
     logger.info('Данные созданы!')
     logger.info(
         'Повтор процесса получения актуального курса валют будет через сутки!',
